@@ -1,4 +1,4 @@
-package application.vehicles;
+package application.vehicle;
 
 import java.util.Objects;
 

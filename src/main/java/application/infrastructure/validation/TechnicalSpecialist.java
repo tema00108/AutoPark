@@ -1,12 +1,14 @@
-package application.validation;
+package application.infrastructure.validation;
 
-import application.vehicles.VehicleType;
+import application.vehicle.VehicleType;
 import application.color.Color;
 import application.engines.CombustionEngine;
 import application.engines.ElectricalEngine;
 
 public class TechnicalSpecialist {
     public static final int LOWER_LIMIT_MANUFACTURE_YEAR = 1886;
+
+    public TechnicalSpecialist() { }
 
     public static boolean validateManufactureYear(int year) {
         return year >= LOWER_LIMIT_MANUFACTURE_YEAR && year < 10000;

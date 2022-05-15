@@ -1,6 +1,6 @@
-package application.service.entity;
+package application.infrastructure.service;
 
-import application.vehicles.Vehicle;
+import application.vehicle.Vehicle;
 
 import java.util.Map;
 

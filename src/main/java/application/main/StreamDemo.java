@@ -1,7 +1,7 @@
 package application.main;
 
-import application.vehicles.Vehicle;
-import application.vehicles.VehicleCollection;
+import application.vehicle.Vehicle;
+import application.vehicle.VehicleCollection;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,11 +69,7 @@ public class StreamDemo {
     }
 
     private static VehicleCollection loadInfo() {
-        VehicleCollection vehicleCollection = new VehicleCollection("types.csv","vehicles.csv", "rents.csv");
-
-        vehicleCollection.loadTypes(PATH);
-        vehicleCollection.loadVehicles(PATH);
-        vehicleCollection.loadRents(PATH);
+        VehicleCollection vehicleCollection = new VehicleCollection();
 
         return vehicleCollection;
     }
