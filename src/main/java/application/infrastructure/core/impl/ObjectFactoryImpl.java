@@ -26,8 +26,8 @@ public class ObjectFactoryImpl implements ObjectFactory {
                                                     .getConfig()
                                                     .getScanner()
                                                     .getSubtypesOf(ObjectConfigurator.class);
-        objConfigs.add((Class<? extends ObjectConfigurator>) AutowiredObjectConfigurator.class);
-        objConfigs.add((Class<? extends ObjectConfigurator>) PropertyObjectConfigurator.class);
+        objConfigs.add(AutowiredObjectConfigurator.class);
+        objConfigs.add(PropertyObjectConfigurator.class);
         for (Class<? extends ObjectConfigurator> objConfig : objConfigs) {
             Constructor<? extends ObjectConfigurator> constructor = objConfig.getConstructor();
             objectConfigurators.add(constructor.newInstance());

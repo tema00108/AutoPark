@@ -17,6 +17,7 @@ public class ApplicationContext implements Context {
     public ApplicationContext(String packageToScan, Map<Class<?>, Class<?>> interfaceToImplementation) {
         config = new JavaConfig(new ScannerImpl(packageToScan), interfaceToImplementation);
         cache = new CacheImpl();
+        cache.put(Context.class, this);
         factory = new ObjectFactoryImpl(this);
     }
 
