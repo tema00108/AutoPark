@@ -1,4 +1,4 @@
-package application.vehicles;
+package application.vehicle;
 
 import application.color.Color;
 import application.engines.Startable;
@@ -8,7 +8,7 @@ import application.rent.Rent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import static application.validation.TechnicalSpecialist.*;
+import static application.infrastructure.validation.TechnicalSpecialist.*;
 
 public class Vehicle implements Comparable<Vehicle>{
 
