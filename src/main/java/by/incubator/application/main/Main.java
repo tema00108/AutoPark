@@ -1,6 +1,11 @@
 package by.incubator.application.main;
 
+import by.incubator.application.entity.Orders;
+import by.incubator.application.entity.Rents;
+import by.incubator.application.entity.Types;
+import by.incubator.application.entity.Vehicles;
 import by.incubator.application.infrastructure.core.impl.ApplicationContext;
+import by.incubator.application.infrastructure.orm.EntityManager;
 import by.incubator.application.infrastructure.vehicleService.Fixer;
 import by.incubator.application.infrastructure.vehicleService.impl.BadMechanicService;
 import by.incubator.application.infrastructure.validation.techroom.Workroom;
@@ -19,14 +24,12 @@ public class Main {
     public static void main(String[] args) {
         Map<Class<?>, Class<?>> interfaceToImplementation = initInterfaceToImplementation();
         ApplicationContext context = new ApplicationContext("by.incubator.application", interfaceToImplementation);
+
         VehicleCollection vehicleCollection = context.getObject(VehicleCollection.class);
         Workroom workroom = context.getObject(Workroom.class);
+
         printRents(vehicleCollection);
         workroom.checkAllVehicles(vehicleCollection.getVehicles());
-
-        VehicleService service = context.getObject(VehicleService.class);
-        System.out.println(service.save(vehicleCollection.getVehicles().get(2)));
-
     }
 
     private static Map<Class<?>, Class<?>> initInterfaceToImplementation() {

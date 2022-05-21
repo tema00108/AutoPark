@@ -28,7 +28,7 @@ public class PostgreDataBaseService {
             "   AND   sequence_name   = '%s'\n" +
             ");";
     private static final String CREATE_ID_SEQ_PATTERN =
-            "CREATE SEQUENCE IF NOT EXISTS %S\n" +
+            "CREATE SEQUENCE %S\n" +
             "   INCREMENT 1\n" +
             "   START 1;";
     private static final String CHECK_TABLE_SQL_PATTERN =
@@ -38,7 +38,7 @@ public class PostgreDataBaseService {
                     "   AND   table_name   = '%s'\n" +
             ");";
     private static final String CREATE_TABLE_SQL_PATTERN =
-            "CREATE TABLE IF NOT EXISTS %s (\n" +
+            "CREATE TABLE %s (\n" +
                     "    %s integer PRIMARY KEY DEFAULT nextval('%s')" +
                     "    %s\n);";
     private static final String INSERT_SQL_PATTERN =
@@ -110,8 +110,6 @@ public class PostgreDataBaseService {
     }
 
     public <T> Optional<T> get(Long id, Class<T> clazz) {
-        Optional<T> obj;
-
         checkTableAnnotation(clazz);
 
         String sql = "SELECT * FROM " + clazz.getDeclaredAnnotation(Table.class).name() +
@@ -138,7 +136,7 @@ public class PostgreDataBaseService {
         return list;
     }
 
-    private <T> ResultSet executeSelect(String sql) {
+    private ResultSet executeSelect(String sql) {
         try(Connection connection = connectionFactory.getConnection();
             Statement statement = connection.createStatement()) {
 
@@ -198,7 +196,7 @@ public class PostgreDataBaseService {
             resultSet = statement.executeQuery(sql);
 
             if (resultSet.next()) {
-                resultSet.getBoolean("exists");
+                return resultSet.getBoolean("exists");
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -215,7 +213,7 @@ public class PostgreDataBaseService {
         try (Connection connection = connectionFactory.getConnection();
              Statement statement = connection.createStatement()) {
 
-            String sql = String.format(pattern,params);
+            String sql = String.format(pattern, params);
             statement.executeQuery(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
