@@ -10,6 +10,7 @@ import by.incubator.application.infrastructure.orm.annotations.Table;
 import by.incubator.application.infrastructure.orm.enums.SqlFieldType;
 import lombok.SneakyThrows;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -109,15 +110,24 @@ public class PostgreDataBaseService {
         return id;
     }
 
+    @SneakyThrows
     public <T> Optional<T> get(Long id, Class<T> clazz) {
         checkTableAnnotation(clazz);
 
         String sql = "SELECT * FROM " + clazz.getDeclaredAnnotation(Table.class).name() +
                      "\nWHERE " + getIdFieldName(clazz.getDeclaredFields()) + " = " + id;
 
-        ResultSet resultSet = executeSelect(sql);
+        try(Connection connection = connectionFactory.getConnection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql)) {
+            if (resultSet.next()) {
+                return Optional.of(makeObject(resultSet, clazz));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
-        return Optional.of(makeObject(resultSet, clazz));
+        return Optional.empty();
     }
 
     @SneakyThrows
@@ -128,22 +138,15 @@ public class PostgreDataBaseService {
 
         String sql = "SELECT * FROM " + clazz.getDeclaredAnnotation(Table.class).name();
 
-        ResultSet resultSet = executeSelect(sql);
-        while(resultSet.next()) {
-            list.add(makeObject(resultSet, clazz));
+        try (Connection connection = connectionFactory.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while(resultSet.next()) {
+                list.add(makeObject(resultSet, clazz));
+            }
         }
 
         return list;
-    }
-
-    private ResultSet executeSelect(String sql) {
-        try(Connection connection = connectionFactory.getConnection();
-            Statement statement = connection.createStatement()) {
-
-            return statement.executeQuery(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @SneakyThrows
@@ -153,17 +156,27 @@ public class PostgreDataBaseService {
         T obj = clazz.getConstructor().newInstance();
 
         for (Field field : clazz.getDeclaredFields()) {
-            String columnName = field.getAnnotation(Column.class).name();
-
-            if (field.getType().equals(Integer.class)) {
-                method = ResultSet.class.getMethod("getInt", String.class);
-            } else {
-                method = ResultSet.class.getMethod("get" + field.getType().getSimpleName(), String.class);
+            if (field.isAnnotationPresent(ID.class)) {
+                String idName = field.getAnnotation(ID.class).name();
+                method = getMethodForType(field.getType());
+                setField(field, obj, method.invoke(resultSet, idName));
             }
-
-            setField(field, obj, method.invoke(resultSet, columnName));
+            if (field.isAnnotationPresent(Column.class)) {
+                String columnName = field.getAnnotation(Column.class).name();
+                method = getMethodForType(field.getType());
+                setField(field, obj, method.invoke(resultSet, columnName));
+            }
         }
         return obj;
+    }
+
+    @SneakyThrows
+    private Method getMethodForType(Class<?> type) {
+        if (type.equals(Integer.class)) {
+            return ResultSet.class.getMethod("getInt", String.class);
+        } else {
+            return ResultSet.class.getMethod("get" + type.getSimpleName(), String.class);
+        }
     }
 
     @SneakyThrows
