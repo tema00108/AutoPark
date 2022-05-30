@@ -1,17 +1,10 @@
 package by.incubator.application.main;
 
-import by.incubator.application.entity.Orders;
-import by.incubator.application.entity.Rents;
-import by.incubator.application.entity.Types;
-import by.incubator.application.entity.Vehicles;
+import by.incubator.application.checkCars.DBVehiclesChecker;
 import by.incubator.application.infrastructure.core.impl.ApplicationContext;
-import by.incubator.application.infrastructure.orm.EntityManager;
 import by.incubator.application.infrastructure.vehicleService.Fixer;
-import by.incubator.application.infrastructure.vehicleService.impl.BadMechanicService;
 import by.incubator.application.infrastructure.validation.techroom.Workroom;
 import by.incubator.application.infrastructure.vehicleService.impl.MechanicService;
-import by.incubator.application.service.VehicleService;
-import by.incubator.application.vehicle.Vehicle;
 import by.incubator.application.vehicle.VehicleCollection;
 import by.incubator.application.vehicle.parser.ParserVehicleInterface;
 import by.incubator.application.vehicle.parser.impl.ParserVehicleFromFile;
@@ -30,6 +23,15 @@ public class Main {
 
         printRents(vehicleCollection);
         workroom.checkAllVehicles(vehicleCollection.getVehicles());
+
+        DBVehiclesChecker carrier = context.getObject(DBVehiclesChecker.class);
+        carrier.vehiclesFromDBToWorkroom(context);
+
+        try {
+            Thread.sleep(100000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Map<Class<?>, Class<?>> initInterfaceToImplementation() {
