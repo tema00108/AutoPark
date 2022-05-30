@@ -1,0 +1,141 @@
+package by.incubator.application.vehicle.parser.impl;
+
+import by.incubator.application.color.Color;
+import by.incubator.application.entity.Rents;
+import by.incubator.application.entity.Types;
+import by.incubator.application.entity.Vehicles;
+import by.incubator.application.infrastructure.core.annotations.Autowired;
+import by.incubator.application.infrastructure.core.annotations.InitMethod;
+import by.incubator.application.infrastructure.validation.TechnicalSpecialist;
+import by.incubator.application.vehicle.parser.ParserVehicleInterface;
+import lombok.SneakyThrows;
+
+import java.io.*;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+public class ParserVehicleFromFile implements ParserVehicleInterface {
+
+    private static final String vehicleTypePath = "src/main/resources/data/types.csv";
+    private static final String vehiclePath = "src/main/resources/data/vehicles.csv";
+    private static final String rentPath = "src/main/resources/data/rents.csv";
+
+    @Autowired
+    private TechnicalSpecialist specialist;
+
+    public ParserVehicleFromFile() { }
+
+    @InitMethod
+    public void init() {
+    }
+
+    @Override
+    public List<Types> loadTypes() {
+
+        List<Types> list = new ArrayList<>();
+        List<String> csvStrings = readFile(vehicleTypePath);
+
+        for (String csvString : csvStrings) {
+            list.add(createType(csvString));
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<Vehicles> loadVehicles() {
+        List<Vehicles> list = new ArrayList<>();
+        List<String> csvStrings = readFile(vehiclePath);
+
+        for (String csvString : csvStrings) {
+            list.add(createVehicle(csvString));
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<Rents> loadRents() {
+
+        List<Rents> list = new ArrayList<>();
+        List<String> csvStrings = readFile(rentPath);
+
+        for (String csvString : csvStrings) {
+            list.add(createRent(csvString));
+        }
+
+        return list;
+    }
+
+    private Vehicles createVehicle(String csvString) {
+        String[] params = parseLine(csvString);
+
+        long id = Integer.parseInt(params[0]);
+        String modelName = params[2];
+        String registrationNumber = params[3];
+        int weight = Integer.parseInt(params[4]);
+        int manufactureYear = Integer.parseInt(params[5]);
+        int mileage = Integer.parseInt(params[6]);
+        String color = params[7];
+        long typeId = Integer.parseInt(params[1]);
+        String engine = params[8];
+
+        return new Vehicles(id, typeId, modelName, registrationNumber, weight, manufactureYear, mileage, color, engine);
+    }
+
+    private Types createType(String csvString) {
+        String[] params = parseLine(csvString);
+
+        double coefficient = Double.parseDouble(params[2]);
+        long id = Integer.parseInt(params[0]);
+        String typeName = params[1];
+
+        return new Types(id, typeName, coefficient);
+    }
+
+    @SneakyThrows
+    public Rents createRent(String csvString) {
+        String[] params = parseLine(csvString);
+
+        double cost = Double.parseDouble(params[2]);
+        long id = Integer.parseInt(params[0]);
+
+        DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        Date date = new Date(formatter.parse(params[1]).getTime());
+
+        return new Rents(id, date, cost);
+    }
+
+    private List<String> readFile(String inFile) {
+        List<String> csvStrings = new ArrayList<>();
+
+        try (FileReader reader = new FileReader(inFile);
+             BufferedReader in = new BufferedReader(reader)){
+
+            csvStrings = in.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return csvStrings;
+    }
+
+    private String[] parseLine(String line) {
+        Pattern pattern = Pattern.compile("(?!\\B\"[^\"]*),(?![^\"]*\"\\B)");
+
+        if (line.indexOf('"') < 0) {
+            return line.split(",");
+        }
+
+        String[] params = pattern.split(line);
+        for (int i = 0; i < params.length; i++) {
+            params[i] = params[i].replaceAll("\"", "").replaceAll(",", ".");
+        }
+        return params;
+    }
+}
