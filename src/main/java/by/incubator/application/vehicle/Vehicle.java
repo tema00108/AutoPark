@@ -11,7 +11,7 @@ import java.util.Objects;
 import static by.incubator.application.infrastructure.validation.TechnicalSpecialist.*;
 
 public class Vehicle implements Comparable<Vehicle>{
-
+    private int id;
     private VehicleType type;
     private String modelName;
     private String registrationNumber;
@@ -19,8 +19,6 @@ public class Vehicle implements Comparable<Vehicle>{
     private int manufactureYear;
     private int mileage;
     private Color color;
-    private int volume;
-    private int id;
     private Startable engine;
     private List<Rent> rents = new ArrayList<>();
 
@@ -136,14 +134,6 @@ public class Vehicle implements Comparable<Vehicle>{
         }
     }
 
-    public int getVolume() {
-        return volume;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
-    }
-
     public Startable getEngine() {
         return engine;
     }
@@ -169,7 +159,6 @@ public class Vehicle implements Comparable<Vehicle>{
     }
 
     public double getCalcTaxPerMonth() {
-
         return (weight * 0.0013) + (type.getTaxCoefficient() * engine.getTaxPerMonth() * 30) + 5;
     }
 

@@ -5,17 +5,19 @@ import by.incubator.application.infrastructure.orm.annotations.ID;
 import by.incubator.application.infrastructure.orm.annotations.Table;
 import lombok.*;
 
-@Table(name = "types")
+import java.sql.Date;
+
+@Table(name = "rents")
 @Builder
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Types {
-    @ID
-    private Long id;
-    @Column(name = "name", unique = true)
-    private String name;
-    @Column(name = "coefTaxes")
-    private Double coefTaxes;
+public class Rent {
+    @ID(name = "carId")
+    private Long carId;
+    @Column(name = "date")
+    private Date date;
+    @Column(name = "cost")
+    private Double cost;
 }

@@ -1,6 +1,6 @@
 package by.incubator.application.engines;
 
-public class ElectricalEngine extends  AbstractEngine {
+public class ElectricalEngine extends AbstractEngine {
 
     private double batterySize;
     private double electricityConsumption;

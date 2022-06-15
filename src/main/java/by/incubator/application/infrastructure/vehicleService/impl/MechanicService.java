@@ -1,11 +1,9 @@
 package by.incubator.application.infrastructure.vehicleService.impl;
 
-import by.incubator.application.entity.Vehicles;
+import by.incubator.application.entity.Vehicle;
 import by.incubator.application.infrastructure.core.annotations.Autowired;
 import by.incubator.application.infrastructure.vehicleService.Fixer;
-import by.incubator.application.vehicle.Vehicle;
 import by.incubator.application.vehicle.parser.ParserBreakingInterface;
-import by.incubator.application.vehicle.parser.impl.ParserBreakingFromFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +28,7 @@ public class MechanicService implements Fixer {
     }
 
     @Override
-    public Map<String, Integer> detectBreaking(Vehicles vehicle) {
+    public Map<String, Integer> detectBreaking(Vehicle vehicle) {
         Random rand = new Random();
         String defect = details[rand.nextInt(details.length)];
         int amount = rand.nextInt(MAX_DEFECTS);
@@ -46,7 +44,7 @@ public class MechanicService implements Fixer {
     }
 
     @Override
-    public void repair(Vehicles vehicle) {
+    public void repair(Vehicle vehicle) {
         int row;
         long id = vehicle.getId();
 
@@ -59,7 +57,7 @@ public class MechanicService implements Fixer {
     }
 
     @Override
-    public boolean isBroken(Vehicles vehicle) {
+    public boolean isBroken(Vehicle vehicle) {
         long id = vehicle.getId();
         return parser.findRow(id) >= 0;
     }

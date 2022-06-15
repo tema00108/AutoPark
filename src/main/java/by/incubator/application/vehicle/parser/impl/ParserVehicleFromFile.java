@@ -1,9 +1,8 @@
 package by.incubator.application.vehicle.parser.impl;
 
-import by.incubator.application.color.Color;
-import by.incubator.application.entity.Rents;
-import by.incubator.application.entity.Types;
-import by.incubator.application.entity.Vehicles;
+import by.incubator.application.entity.Rent;
+import by.incubator.application.entity.Type;
+import by.incubator.application.entity.Vehicle;
 import by.incubator.application.infrastructure.core.annotations.Autowired;
 import by.incubator.application.infrastructure.core.annotations.InitMethod;
 import by.incubator.application.infrastructure.validation.TechnicalSpecialist;
@@ -13,7 +12,6 @@ import lombok.SneakyThrows;
 import java.io.*;
 import java.sql.Date;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -35,9 +33,9 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
     }
 
     @Override
-    public List<Types> loadTypes() {
+    public List<Type> loadTypes() {
 
-        List<Types> list = new ArrayList<>();
+        List<Type> list = new ArrayList<>();
         List<String> csvStrings = readFile(vehicleTypePath);
 
         for (String csvString : csvStrings) {
@@ -48,8 +46,8 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
     }
 
     @Override
-    public List<Vehicles> loadVehicles() {
-        List<Vehicles> list = new ArrayList<>();
+    public List<Vehicle> loadVehicles() {
+        List<Vehicle> list = new ArrayList<>();
         List<String> csvStrings = readFile(vehiclePath);
 
         for (String csvString : csvStrings) {
@@ -60,9 +58,9 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
     }
 
     @Override
-    public List<Rents> loadRents() {
+    public List<Rent> loadRents() {
 
-        List<Rents> list = new ArrayList<>();
+        List<Rent> list = new ArrayList<>();
         List<String> csvStrings = readFile(rentPath);
 
         for (String csvString : csvStrings) {
@@ -72,7 +70,7 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
         return list;
     }
 
-    private Vehicles createVehicle(String csvString) {
+    private Vehicle createVehicle(String csvString) {
         String[] params = parseLine(csvString);
 
         long id = Integer.parseInt(params[0]);
@@ -85,21 +83,21 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
         long typeId = Integer.parseInt(params[1]);
         String engine = params[8];
 
-        return new Vehicles(id, typeId, modelName, registrationNumber, weight, manufactureYear, mileage, color, engine);
+        return new Vehicle(id, typeId, modelName, registrationNumber, weight, manufactureYear, mileage, color, engine);
     }
 
-    private Types createType(String csvString) {
+    private Type createType(String csvString) {
         String[] params = parseLine(csvString);
 
         double coefficient = Double.parseDouble(params[2]);
         long id = Integer.parseInt(params[0]);
         String typeName = params[1];
 
-        return new Types(id, typeName, coefficient);
+        return new Type(id, typeName, coefficient);
     }
 
     @SneakyThrows
-    public Rents createRent(String csvString) {
+    public Rent createRent(String csvString) {
         String[] params = parseLine(csvString);
 
         double cost = Double.parseDouble(params[2]);
@@ -108,7 +106,7 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
         DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
         Date date = new Date(formatter.parse(params[1]).getTime());
 
-        return new Rents(id, date, cost);
+        return new Rent(id, date, cost);
     }
 
     private List<String> readFile(String inFile) {

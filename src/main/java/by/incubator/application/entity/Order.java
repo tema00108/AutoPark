@@ -5,19 +5,19 @@ import by.incubator.application.infrastructure.orm.annotations.ID;
 import by.incubator.application.infrastructure.orm.annotations.Table;
 import lombok.*;
 
-import java.sql.Date;
-
-@Table(name = "rents")
+@Table(name = "orders")
 @Builder
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Rents {
-    @ID(name = "carId")
-    private Long carId;
-    @Column(name = "date")
-    private Date date;
-    @Column(name = "cost")
-    private Double cost;
+public class Order {
+    @ID
+    private Long id;
+    @Column(name = "vehicleId")
+    private Long vehicleId;
+    @Column(name = "defect")
+    private String defect;
+    @Column(name = "breakingAmount")
+    private Integer breakingAmount;
 }

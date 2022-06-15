@@ -13,11 +13,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Vehicles {
+public class Vehicle {
     @ID
     private Long id;
     @Column(name = "typesId", nullable = false)
-    private Long typesId;
+    private Long typeId;
     @Column(name = "model", nullable = false)
     private String model;
     @Column(name = "registrationNumber", unique = true, nullable = false)
@@ -30,6 +30,6 @@ public class Vehicles {
     private Integer mileage;
     @Column(name = "color")
     private String color;
-    @Column(name = "engineType")
-    private String engineType;
+    @Column(name = "engineName")
+    private String engineName;
 }

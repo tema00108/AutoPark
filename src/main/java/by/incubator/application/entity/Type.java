@@ -5,19 +5,17 @@ import by.incubator.application.infrastructure.orm.annotations.ID;
 import by.incubator.application.infrastructure.orm.annotations.Table;
 import lombok.*;
 
-@Table(name = "orders")
+@Table(name = "types")
 @Builder
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Orders {
+public class Type {
     @ID
     private Long id;
-    @Column(name = "vehicleId")
-    private Long vehicleId;
-    @Column(name = "defect")
-    private String defect;
-    @Column(name = "breakingAmount")
-    private Integer breakingAmount;
+    @Column(name = "name", unique = true)
+    private String name;
+    @Column(name = "taxCoefficient")
+    private Double taxCoefficient;
 }

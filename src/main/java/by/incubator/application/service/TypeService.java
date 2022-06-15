@@ -1,28 +1,28 @@
 package by.incubator.application.service;
 
-import by.incubator.application.entity.Types;
+import by.incubator.application.entity.Type;
 import by.incubator.application.infrastructure.core.annotations.Autowired;
 import by.incubator.application.infrastructure.core.annotations.InitMethod;
 import by.incubator.application.infrastructure.orm.EntityManager;
 
 import java.util.List;
 
-public class TypesService {
+public class TypeService {
     @Autowired
     EntityManager entityManager;
 
     @InitMethod
     public void init() { }
 
-    public Types get(Long id) {
-        return entityManager.get(id, Types.class).get();
+    public Type get(Long id) {
+        return entityManager.get(id, Type.class).get();
     }
 
-    public List<Types> getAll() {
-        return entityManager.getAll(Types.class);
+    public List<Type> getAll() {
+        return entityManager.getAll(Type.class);
     }
 
-    public Long save(Types type) {
+    public Long save(Type type) {
         return entityManager.save(type);
     }
 }

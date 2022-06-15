@@ -1,28 +1,28 @@
 package by.incubator.application.service;
 
-import by.incubator.application.entity.Vehicle;
+import by.incubator.application.entity.Rent;
 import by.incubator.application.infrastructure.core.annotations.Autowired;
 import by.incubator.application.infrastructure.core.annotations.InitMethod;
 import by.incubator.application.infrastructure.orm.EntityManager;
 
 import java.util.List;
 
-public class VehicleService {
+public class RentService {
     @Autowired
     EntityManager entityManager;
 
     @InitMethod
     public void init() { }
 
-    public Vehicle get(Long id) {
-        return entityManager.get(id, Vehicle.class).get();
+    public Rent get(Long id) {
+        return entityManager.get(id, Rent.class).get();
     }
 
-    public List<Vehicle> getAll() {
-        return entityManager.getAll(Vehicle.class);
+    public List<Rent> getAll() {
+        return entityManager.getAll(Rent.class);
     }
 
-    public Long save(Vehicle vehicle) {
-        return entityManager.save(vehicle);
+    public Long save(Rent rent) {
+        return entityManager.save(rent);
     }
 }
