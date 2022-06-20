@@ -3,12 +3,13 @@ package by.incubator.application.dto;
 import by.incubator.application.infrastructure.orm.annotations.Column;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
 public class VehicleDto {
     private long id;
-    private long typeId;
     private String typeName;
     private double taxCoefficient;
     private String modelName;

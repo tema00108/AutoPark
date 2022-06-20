@@ -11,18 +11,18 @@ import java.util.Objects;
 import static by.incubator.application.infrastructure.validation.TechnicalSpecialist.*;
 
 public class Vehicle implements Comparable<Vehicle>{
-    private int id;
+    private long id;
     private VehicleType type;
     private String modelName;
     private String registrationNumber;
     private int weight;
     private int manufactureYear;
     private int mileage;
-    private Color color;
+    private String color;
     private Startable engine;
     private List<Rent> rents = new ArrayList<>();
 
-    public Vehicle(int id,
+    public Vehicle(long id,
                    VehicleType type,
                    Startable engine,
                    String modelName,
@@ -30,52 +30,41 @@ public class Vehicle implements Comparable<Vehicle>{
                    int weight,
                    int manufactureYear,
                    int mileage,
-                   Color color) {
+                   String color) {
         try {
             if (!validateVehicleType(type)) {
                 throw new NotVehicleException("Vehicle type: " + type);
             }
-
             this.type = type;
 
             if (!validateModelName(modelName)) {
                 throw new NotVehicleException("Model name: " + modelName);
             }
-
             this.modelName = modelName;
 
             if (!validateRegistrationNumber(registrationNumber)) {
                 throw new NotVehicleException("Registration number:" + registrationNumber);
             }
-
             this.registrationNumber = registrationNumber;
 
             if (!validateWeight(weight)) {
                 throw new NotVehicleException("Weight: " + weight);
             }
-
             this.weight = weight;
 
             if (!validateManufactureYear(manufactureYear)) {
                 throw new NotVehicleException("Manufacture year: " + manufactureYear);
             }
-
             this.manufactureYear = manufactureYear;
 
             if (!validateMileage(mileage)) {
                 throw new NotVehicleException("Mileage: " + mileage);
             }
-
             this.mileage = mileage;
 
-            if (!validateColor(color)) {
-                throw new NotVehicleException("Color: " + color);
-            }
-
             this.color = color;
-
         } catch (NotVehicleException e) {
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
 
         this.id = id;
@@ -124,14 +113,12 @@ public class Vehicle implements Comparable<Vehicle>{
         }
     }
 
-    public Color getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
-        if (validateColor(color)) {
-            this.color = color;
-        }
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public Startable getEngine() {
@@ -142,7 +129,7 @@ public class Vehicle implements Comparable<Vehicle>{
         this.engine = engine;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

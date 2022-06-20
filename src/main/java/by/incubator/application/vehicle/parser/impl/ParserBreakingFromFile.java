@@ -1,5 +1,7 @@
 package by.incubator.application.vehicle.parser.impl;
 
+import by.incubator.application.entity.Order;
+import by.incubator.application.entity.Vehicle;
 import by.incubator.application.vehicle.parser.ParserBreakingInterface;
 import com.opencsv.*;
 import com.opencsv.exceptions.CsvException;
@@ -9,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class ParserBreakingFromFile implements ParserBreakingInterface {
 
@@ -35,47 +38,37 @@ public class ParserBreakingFromFile implements ParserBreakingInterface {
         }
     }
 
-    public int findRow(long id) {
+    public Optional<Order> findOrder(long id) {
         try (CSVReader reader = new CSVReader(new FileReader(ORDERS_PATH))) {
+            List<String[]> lines = reader.readAll();
+            Optional<String[]> optionalStr = lines.stream().filter(line -> Long.parseLong(line[0]) == id).findFirst();
 
-            String [] nextLine = reader.readNext();
-            int counter = 0;
-            int idFound = 0;
-
-            while (nextLine != null) {
-                if (!nextLine[0].isEmpty()) {
-                    idFound = Integer.parseInt(nextLine[0]);
-                }
-
-                if (idFound == id) {
-                    return counter;
-                }
-
-                nextLine = reader.readNext();
-                counter++;
+            if (optionalStr.isPresent()) {
+                String[] line = optionalStr.get();
+                return Optional.of(new Order(Long.parseLong(line[0]), line[1], Integer.parseInt(line[2])));
             }
-
         } catch (CsvException | IOException e) {
             e.printStackTrace();
         }
 
-        return -1;
+        return Optional.empty();
     }
 
-    public void deleteOrderString(int rowNumber) {
-        try (CSVReader reader = new CSVReader(new FileReader(ORDERS_PATH))) {
+    public void deleteOrder(Vehicle vehicle) {
+        try (CSVReader reader = new CSVReader(new FileReader(ORDERS_PATH));
+             CSVWriter writer = new CSVWriter(new FileWriter(ORDERS_PATH),
+                     ',',
+                     CSVWriter.NO_QUOTE_CHARACTER,
+                     ' ',
+                     "\n")) {
             List<String[]> allLines = reader.readAll();
-            allLines.remove(rowNumber);
-
-            CSVWriter writer = new CSVWriter(new FileWriter(ORDERS_PATH),
-                    ',',
-                    CSVWriter.NO_QUOTE_CHARACTER,
-                    ' ',
-                    "\n");
+            allLines.stream().forEach(line -> {
+                if (Long.parseLong(line[0]) == vehicle.getId()) {
+                    allLines.remove(line);
+                }
+            });
 
             writer.writeAll(allLines);
-            writer.close();
-
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }

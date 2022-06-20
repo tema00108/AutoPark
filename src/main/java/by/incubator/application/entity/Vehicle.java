@@ -16,7 +16,7 @@ import lombok.*;
 public class Vehicle {
     @ID
     private Long id;
-    @Column(name = "typesId", nullable = false)
+    @Column(name = "typeId", nullable = false)
     private Long typeId;
     @Column(name = "model", nullable = false)
     private String model;
@@ -30,6 +30,12 @@ public class Vehicle {
     private Integer mileage;
     @Column(name = "color")
     private String color;
-    @Column(name = "engineName")
-    private String engineName;
+    @Column(name = "engineType")
+    private String engineType;
+    @Column(name = "consumption")
+    private Double consumption;
+    @Column(name = "capacity")
+    private Double capacity;
+    @Column(name = "engineTaxCoefficient")
+    private Double engineTaxCoefficient;
 }

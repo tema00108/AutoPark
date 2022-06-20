@@ -6,6 +6,7 @@ import by.incubator.application.infrastructure.core.annotations.InitMethod;
 import by.incubator.application.infrastructure.orm.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 
 public class OrderService {
     @Autowired
@@ -15,7 +16,7 @@ public class OrderService {
     public void init() { }
 
     public Order get(Long id) {
-        return entityManager.get(id, Order.class).get();
+        return entityManager.get(id, Order.class).orElse(null);
     }
 
     public List<Order> getAll() {
@@ -24,5 +25,9 @@ public class OrderService {
 
     public Long save(Order order) {
         return entityManager.save(order);
+    }
+
+    public Order delete(Long id) {
+        return entityManager.delete(id, Order.class).orElse(null);
     }
 }

@@ -1,16 +1,15 @@
 package by.incubator.application.infrastructure.vehicleService.impl;
 
+import by.incubator.application.entity.Order;
 import by.incubator.application.entity.Vehicle;
 import by.incubator.application.infrastructure.core.annotations.Autowired;
 import by.incubator.application.infrastructure.vehicleService.Fixer;
 import by.incubator.application.vehicle.parser.ParserBreakingInterface;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class MechanicService implements Fixer {
-    private static final String[] details = {"Фильтр", "Фтулка", "Вал", "Ось",
+    private static final String[] details = {"Фильтр", "Втулка", "Вал", "Ось",
             "Свеча","Масло","ГРМ","ШРУС"};
     private static final int MAX_DEFECTS = 5;
 
@@ -45,20 +44,16 @@ public class MechanicService implements Fixer {
 
     @Override
     public void repair(Vehicle vehicle) {
-        int row;
         long id = vehicle.getId();
-
-        row = parser.findRow(id);
-        if (row < 0) {
+        if (parser.findOrder(id).isEmpty()) {
             return;
         }
 
-        parser.deleteOrderString(row);
+        parser.deleteOrder(vehicle);
     }
 
     @Override
     public boolean isBroken(Vehicle vehicle) {
-        long id = vehicle.getId();
-        return parser.findRow(id) >= 0;
+        return parser.findOrder(vehicle.getId()).isPresent();
     }
 }

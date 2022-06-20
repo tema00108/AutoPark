@@ -15,7 +15,7 @@ public class TypeService {
     public void init() { }
 
     public Type get(Long id) {
-        return entityManager.get(id, Type.class).get();
+        return entityManager.get(id, Type.class).orElse(null);
     }
 
     public List<Type> getAll() {

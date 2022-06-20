@@ -1,5 +1,8 @@
 package by.incubator.application.vehicle.parser.impl;
 
+import by.incubator.application.engines.DieselEngine;
+import by.incubator.application.engines.ElectricalEngine;
+import by.incubator.application.engines.GasolineEngine;
 import by.incubator.application.entity.Rent;
 import by.incubator.application.entity.Type;
 import by.incubator.application.entity.Vehicle;
@@ -82,8 +85,31 @@ public class ParserVehicleFromFile implements ParserVehicleInterface {
         String color = params[7];
         long typeId = Integer.parseInt(params[1]);
         String engine = params[8];
+        double consumption;
+        double capacity;
+        double engineTaxCoefficient;
 
-        return new Vehicle(id, typeId, modelName, registrationNumber, weight, manufactureYear, mileage, color, engine);
+        switch (engine) {
+            case GasolineEngine.TYPE_NAME:
+                consumption = Double.parseDouble(params[10]);
+                capacity = Double.parseDouble(params[11]);
+                engineTaxCoefficient = GasolineEngine.TAX_COEFFICIENT;
+                break;
+            case DieselEngine.TYPE_NAME:
+                consumption = Double.parseDouble(params[10]);
+                capacity = Double.parseDouble(params[11]);
+                engineTaxCoefficient = DieselEngine.TAX_COEFFICIENT;
+                break;
+            case ElectricalEngine.TYPE_NAME:
+                consumption = Double.parseDouble(params[9]);
+                capacity = Double.parseDouble(params[10]);
+                engineTaxCoefficient = ElectricalEngine.TAX_COEFFICIENT;
+                break;
+            default:
+                throw new IllegalArgumentException("Engine type is incorrect: " + engine);
+        }
+
+        return new Vehicle(id, typeId, modelName, registrationNumber, weight, manufactureYear, mileage, color, engine, consumption, capacity, engineTaxCoefficient);
     }
 
     private Type createType(String csvString) {

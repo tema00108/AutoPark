@@ -1,12 +1,14 @@
 package by.incubator.application.engines;
 
 public class ElectricalEngine extends AbstractEngine {
+    public static final double TAX_COEFFICIENT = 0.1;
+    public static final String TYPE_NAME = "Electrical";
 
     private double batterySize;
     private double electricityConsumption;
 
     public ElectricalEngine(double batterySize, double electricityConsumption) {
-        super("Electrical", 0.1);
+        super(TYPE_NAME, TAX_COEFFICIENT);
         this.batterySize = batterySize;
         this.electricityConsumption = electricityConsumption;
     }

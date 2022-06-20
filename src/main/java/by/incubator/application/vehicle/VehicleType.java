@@ -5,13 +5,13 @@ import java.util.Objects;
 public class VehicleType {
     private String typeName;
     private double taxCoefficient;
-    private int id;
+    private long id;
 
     public VehicleType() {}
 
-    public VehicleType(String name, double taxRatio, int id) {
+    public VehicleType(String name, double taxCoefficient, long id) {
         this.typeName = name;
-        this.taxCoefficient = taxRatio;
+        this.taxCoefficient = taxCoefficient;
         this.id = id;
     }
 
@@ -23,7 +23,7 @@ public class VehicleType {
         this.typeName = typeName;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

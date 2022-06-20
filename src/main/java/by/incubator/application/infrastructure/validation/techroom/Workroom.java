@@ -22,18 +22,10 @@ public class Workroom {
     }
 
     public void checkAllVehicles(List<Vehicle> vehicles) {
-        showBroken(vehicles.stream());
-        showServiceable(vehicles.stream());
+        vehicles.stream().forEach(vehicle -> mechanic.detectBreaking(vehicle));
     }
 
-    private void showBroken(Stream<Vehicle> stream) {
-        System.out.println("Broken vehicles:");
-        stream.filter(v -> mechanic.isBroken(v)).forEach(System.out::println);
+    public void repairAllVehicles(List<Vehicle> vehicles) {
+        vehicles.stream().forEach(vehicle -> mechanic.repair(vehicle));
     }
-
-    private void showServiceable(Stream<Vehicle> stream) {
-        System.out.println("Serviceable vehicles:");
-        stream.filter(v -> !mechanic.isBroken(v)).forEach(System.out::println);
-    }
-
 }

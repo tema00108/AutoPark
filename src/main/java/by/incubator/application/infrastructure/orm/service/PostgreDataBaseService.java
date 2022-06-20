@@ -10,7 +10,6 @@ import by.incubator.application.infrastructure.orm.annotations.Table;
 import by.incubator.application.infrastructure.orm.enums.SqlFieldType;
 import lombok.SneakyThrows;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -34,18 +33,22 @@ public class PostgreDataBaseService {
             "   START 1;";
     private static final String CHECK_TABLE_SQL_PATTERN =
             "SELECT EXISTS (\n" +
-                    "   SELECT FROM information_schema.tables \n" +
-                    "   WHERE table_schema = 'public' \n" +
-                    "   AND   table_name   = '%s'\n" +
+            "   SELECT FROM information_schema.tables \n" +
+            "   WHERE table_schema = 'public' \n" +
+            "   AND   table_name   = '%s'\n" +
             ");";
     private static final String CREATE_TABLE_SQL_PATTERN =
             "CREATE TABLE %s (\n" +
-                    "    %s integer PRIMARY KEY DEFAULT nextval('%s')" +
-                    "    %s\n);";
+            "    %s serial PRIMARY KEY DEFAULT" +
+            "    %s\n);";
     private static final String INSERT_SQL_PATTERN =
             "INSERT INTO %s(%s)\n" +
             "   VALUES (%s)\n" +
             "   RETURNING %s;";
+    private static final String DELETE_ROW_SQL_PATTERN =
+            "DELETE FROM %s\n" +
+            "   WHERE %s = %s\n" +
+            "   RETURNING *;";
 
 
     @Autowired
@@ -91,7 +94,7 @@ public class PostgreDataBaseService {
 
         Field idField = getIdField(obj.getClass().getDeclaredFields());
         Object[] values = Arrays.stream(obj.getClass().getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(Column.class))
+                .filter(field -> field.isAnnotationPresent(Column.class) || field.isAnnotationPresent(ID.class))
                 .map(field -> {field.setAccessible(true);
                     try {
                         return field.get(obj);
@@ -147,6 +150,25 @@ public class PostgreDataBaseService {
         }
 
         return list;
+    }
+
+    @SneakyThrows
+    public <T> Optional<T> delete(Long id, Class<T> clazz) {
+        checkTableAnnotation(clazz);
+
+        String sql = String.format(DELETE_ROW_SQL_PATTERN, clazz.getDeclaredAnnotation(Table.class).name()
+                                                         , getIdFieldName(clazz.getDeclaredFields())
+                                                         , id);
+
+        try (Connection connection = connectionFactory.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            if (resultSet.next()) {
+                return Optional.of(makeObject(resultSet, clazz));
+            }
+        }
+
+        return Optional.empty();
     }
 
     @SneakyThrows
@@ -297,7 +319,7 @@ public class PostgreDataBaseService {
         String idField = getIdFieldName(declaredFields);
         String fields = getFieldsQuery(declaredFields);
 
-        executeCreate(CREATE_TABLE_SQL_PATTERN, tableName, idField, SEQ_NAME, fields);
+        executeCreate(CREATE_TABLE_SQL_PATTERN, tableName, idField, fields);
     }
 
     private String getInsertQuery(Class<?> entity) {
@@ -305,12 +327,16 @@ public class PostgreDataBaseService {
 
         String tableName = entity.getDeclaredAnnotation(Table.class).name();
         String idField = getIdFieldName(declaredFields);
-        String insertFields = Arrays.stream(declaredFields)
+        String insertFields = idField + ", " + Arrays.stream(declaredFields)
                 .filter(field -> field.isAnnotationPresent(Column.class))
                 .map(field -> field.getDeclaredAnnotation(Column.class).name())
                 .reduce((name1, name2) -> name1 + ", " + name2).get();
 
         String values = Arrays.stream(declaredFields)
+                    .filter(field -> field.isAnnotationPresent(ID.class))
+                    .map(field -> insertPatternByClass.get(field.getType().getName()))
+                    .findFirst().get() + ", " +
+                    Arrays.stream(declaredFields)
                     .filter(field -> field.isAnnotationPresent(Column.class))
                     .map(field -> insertPatternByClass.get(field.getType().getName()))
                     .reduce((name1, name2) -> name1 + ", " + name2).get();

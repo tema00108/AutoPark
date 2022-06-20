@@ -19,7 +19,7 @@
 <body>
     <div class="center flex full-vh">
         <div class="vertical-center">
-            <a class="ml-20" href="/">На главную</a>
+            <a class="ml-20" href="${pageContext.request.contextPath}/">На главную</a>
             <br />
             <br />
             <br />
@@ -40,9 +40,9 @@
                 String descPath = "?" + sortKey + "&desc";
             %>
             <div>
-                <a class="ml-20" href="=<%=descPath%>">Сортировать по убыванию</a>
-                <a class="ml-20" href="=<%=ascPath%>">Сортировать по возрастанию</a>
-                <a class="ml-20" href="=<%=clearPath%>">Очистить параметрв поиска</a>
+                <a class="ml-20" href="<%=descPath%>">Сортировать по убыванию</a>
+                <a class="ml-20" href="<%=ascPath%>">Сортировать по возрастанию</a>
+                <a class="ml-20" href="${pageContext.request.contextPath}<%=clearPath%>">Очистить параметры поиска</a>
             </div>
             <br />
             <br />
@@ -58,10 +58,10 @@
                     List<VehicleTypeDto> dtoList = (List<VehicleTypeDto>) request.getAttribute("types");
                     Comparator<VehicleTypeDto> comparator = null;
                     if (sortKey != null && sortKey.equals("name")) {
-                        comparator = Comparator.comparingDouble(vehicleTypeDto -> vehicleTypeDto.getName());
+                        comparator = Comparator.comparing(VehicleTypeDto::getName);
                     }
                     if (sortKey != null && sortKey.equals("tax")) {
-                        comparator = Comparator.comparingDouble(vehicleTypeDto -> vehicleTypeDto.getTaxCoefficient());
+                        comparator = Comparator.comparingDouble(VehicleTypeDto::getTaxCoefficient);
                     }
                     if (order != null && comparator != null && order.equals("desc")) {
                         comparator = comparator.reversed();
@@ -78,16 +78,15 @@
                 <%}%>
             </table>
             <%if (dtoList.size() > 0) {%>
-            <p>Минимальный коэффициент: <strong><%=dtoList.stream().map(VehicleDto::getTaxCoefficient).min(Double::compareTo).get()%></strong></p>
-            <p>Максимальный коэффициент: <strong><%=dtoList.stream().map(VehicleDto::getTaxCoefficient).max(Double::compareTo).get()%></strong></p>
+            <p>Минимальный коэффициент:  <strong><%=dtoList.stream().map(VehicleTypeDto::getTaxCoefficient).min(Double::compareTo).get()%></strong></p>
+            <p>Максимальный коэффициент: <strong><%=dtoList.stream().map(VehicleTypeDto::getTaxCoefficient).max(Double::compareTo).get()%></strong></p>
             <%}%>
             <br />
             <br />
             <br />
             <div>
-                <% if (request.getParameter("name") == null) {%><a class="ml-20" href="/viewTypes?name">Сортировать по названию</a><%}%>
-                <% if (request.getParameter("tax") == null) {%><a class="ml-20" href="/viewTypes?name">Сортировать по коэффициенту</a><%}%>
-
+                <% if (request.getParameter("name") == null) {%><a class="ml-20" href="${pageContext.request.contextPath}/viewTypes?name">Сортировать по названию</a><%}%>
+                <% if (request.getParameter("tax") == null) {%><a class="ml-20" href="${pageContext.request.contextPath}/viewTypes?tax">Сортировать по коэффициенту</a><%}%>
             </div>
         </div>
     </div>

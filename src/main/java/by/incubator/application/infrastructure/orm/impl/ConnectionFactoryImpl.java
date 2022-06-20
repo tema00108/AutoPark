@@ -11,13 +11,10 @@ import java.sql.DriverManager;
 public class ConnectionFactoryImpl implements ConnectionFactory {
     @Property("url")
     private String url;
-
     @Property("username")
     private String username;
-
     @Property("password")
     private String password;
-
     private Connection connection;
 
     public ConnectionFactoryImpl() { }
@@ -25,6 +22,7 @@ public class ConnectionFactoryImpl implements ConnectionFactory {
     @SneakyThrows
     @InitMethod
     public void initConnection() {
+        Class.forName("org.postgresql.Driver");
         connection =  DriverManager.getConnection(url, username, password);
     }
 

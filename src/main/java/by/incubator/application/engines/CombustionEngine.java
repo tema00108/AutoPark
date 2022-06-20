@@ -6,7 +6,7 @@ public class CombustionEngine extends AbstractEngine {
     double fuelTankCapacity;
     double fuelConsumptionPer100;
 
-    public CombustionEngine(String typeName, double taxCoefficient, double engineCapacity, double fuelConsumptionPer100, double fuelTankCapacity) {
+    public CombustionEngine(String typeName,double taxCoefficient, double engineCapacity, double fuelConsumptionPer100, double fuelTankCapacity) {
         super(typeName, taxCoefficient);
         this.fuelTankCapacity = fuelTankCapacity;
         this.fuelConsumptionPer100 = fuelConsumptionPer100;

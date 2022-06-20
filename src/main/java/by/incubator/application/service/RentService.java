@@ -15,7 +15,7 @@ public class RentService {
     public void init() { }
 
     public Rent get(Long id) {
-        return entityManager.get(id, Rent.class).get();
+        return entityManager.get(id, Rent.class).orElse(null);
     }
 
     public List<Rent> getAll() {

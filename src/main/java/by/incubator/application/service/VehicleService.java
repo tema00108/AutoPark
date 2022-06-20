@@ -15,7 +15,7 @@ public class VehicleService {
     public void init() { }
 
     public Vehicle get(Long id) {
-        return entityManager.get(id, Vehicle.class).get();
+        return entityManager.get(id, Vehicle.class).orElse(null);
     }
 
     public List<Vehicle> getAll() {
